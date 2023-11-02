@@ -1,5 +1,6 @@
 import { FC, useState } from 'react'
-import { Vehicle } from '../ShipsGrid/types';
+import { Vehicle } from '../types';
+import './ShipCard.css'
 
 interface props {
     vehicle : Vehicle
@@ -12,13 +13,27 @@ const ShipCard: FC<props> = (props) => {
 
     return (
         <div className='ship-card'>
-            <h3 className='vehicle-name'>{vehicle.title}</h3>
-            <p>{vehicle.type.title}</p>
-            <p>{vehicle.nation.title}</p>
-            <p>{vehicle.level}</p>
-            <p>{vehicle.description}</p>
-            <img src={vehicle.icons.large}></img>
-
+            <div className='main-info-container'>
+                <h3 className='vehicle-name'>{vehicle.title}</h3>
+                <hr></hr>
+                <h4 className='info-section-title'>Class</h4>
+                <div className='info-text'>
+                    <p>{vehicle.type.title}</p>
+                    <img src={vehicle.type.icons.default} alt={vehicle.type.title} title={vehicle.type.title}/>
+                </div>
+                <hr></hr>
+                <h4 className='info-section-title'>Level: {vehicle.level}</h4>
+                <hr></hr>
+                <h4 className='info-section-title'>Nation</h4>
+                <div className='info-text'>
+                    <p>{vehicle.nation.title}</p>
+                    <img src={vehicle.nation.icons.small} alt={vehicle.nation.title} title={vehicle.nation.title} />
+                </div>
+            </div>
+            <div className='secondary-info-container'>
+                <p className='vehicle-description'>{vehicle.description}</p>
+                <img src={vehicle.icons.large} alt={vehicle.title} title={vehicle.title}/>
+            </div>
         </div>
     )
 }

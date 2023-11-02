@@ -1,6 +1,7 @@
 import { FC, useState, useEffect } from 'react'
-import { Vehicle, GraphQLResponse } from './types';
+import { Vehicle, GraphQLResponse } from '../types';
 import ShipCard from '../ShipCard/ShipCard';
+import './ShipsGrid.css'
 
 
 const ShipGrid: FC = (props) => {
