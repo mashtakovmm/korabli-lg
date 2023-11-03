@@ -1,4 +1,4 @@
-import { FC, useState } from 'react'
+import { FC } from 'react'
 import { Vehicle } from '../types';
 import './ShipCard.css'
 
@@ -32,7 +32,7 @@ const ShipCard: FC<props> = (props) => {
             </div>
             <div className='secondary-info-container'>
                 <p className='vehicle-description'>{vehicle.description}</p>
-                <img src={vehicle.icons.large} alt={vehicle.title} title={vehicle.title}/>
+                <img className='ship-img' src={vehicle.icons.large} alt={vehicle.title} title={vehicle.title}/>
             </div>
         </div>
     )

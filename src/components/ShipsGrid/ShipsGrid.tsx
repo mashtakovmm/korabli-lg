@@ -2,7 +2,7 @@ import { FC, useState, useEffect } from 'react'
 import { Vehicle, GraphQLResponse } from '../types';
 import ShipCard from '../ShipCard/ShipCard';
 import './ShipsGrid.css'
-
+import Filter from '../Filter/Filter';
 
 const ShipGrid: FC = (props) => {
     const [data, setData] = useState<Vehicle[]>([])
@@ -12,41 +12,43 @@ const ShipGrid: FC = (props) => {
         async function FetchAllShips() {
             try {
                 const response = await fetch('https://vortex.korabli.su/api/graphql/glossary/', {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        query: `
-                    {
-                      vehicles {
-                        title
-                        description
-                        icons {
-                          large
-                          medium
-                        }
-                        level
-                        type {
-                          name
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({
+                    query: `
+                      {
+                        vehicles {
                           title
+                          description
                           icons {
-                            default
-                          }
-                        }
-                        nation {
-                          name
-                          title
-                          color
-                          icons {
-                            small
-                            medium
                             large
+                            medium
+                          }
+                          level
+                          type {
+                            name
+                            title
+                            icons {
+                              default
+                            }
+                          }
+                          nation {
+                            name
+                            title
+                            color
+                            icons {
+                              small
+                              medium
+                              large
+                            }
                           }
                         }
                       }
-                    }
-                  `
-                    })
-                });
-
+                    `
+                  })
+                });        
                 const resp: GraphQLResponse = await response.json();
                 console.log(resp.data.vehicles);
 
@@ -63,11 +65,14 @@ const ShipGrid: FC = (props) => {
         <>
             {isLoading && <div>Loading....</div>}
             {!isLoading && (
-                <div className='ship-grid'>
-                    {data.map((vehicle, index) => (
-                        <ShipCard key={index} vehicle={vehicle} />
-                    ))}
-                </div>
+                <>
+                    {/* <Filter /> */}
+                    <div className='ship-grid'>
+                        {data.map((vehicle, index) => (
+                            <ShipCard key={index} vehicle={vehicle} />
+                        ))}
+                    </div>
+                </>
             )}
         </>
     );
