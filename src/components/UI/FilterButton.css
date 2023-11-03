@@ -1,0 +1,21 @@
+.filter-button {
+    color: white;
+    text-transform: uppercase;
+    font-weight: bold;
+    background-color: #e3340c;
+    box-shadow: none;
+    border: solid 0px #5d4f49;
+    border-radius: 20px;
+    text-align: center;
+    padding: 10px;
+    min-width: 50px;
+    font-size: 12px;
+}
+
+.filter-button:hover {
+    background-color: #d82a30;
+}
+
+.filter-button:active {
+    background-color: #c1272d;
+}

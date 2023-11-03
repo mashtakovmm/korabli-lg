@@ -8,7 +8,6 @@
     width: 1150px;
     align-items: center;
     background-color: #002331;
-    font-family: 'Inter', sans-serif;
     text-align: justify;
 }
 
@@ -39,12 +38,20 @@
     align-items: center;
 }
 
+.nation-info{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
 .secondary-info-container {
     display: flex;
     flex-direction: column;
     align-items: center;
     width: 918px;
-    background-color: #033642
+    background-color: #033642;
+    border: solid 1px #033642;
+    border-radius: 10px;
 }
 
 .vehicle-description{

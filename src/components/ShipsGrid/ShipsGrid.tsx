@@ -7,17 +7,20 @@ import Filter from '../Filter/Filter';
 const ShipGrid: FC = (props) => {
     const [data, setData] = useState<Vehicle[]>([])
     const [isLoading, setIsLoading] = useState(true)
+    const [uniqueClasses, setUniqueClasses] = useState<string[]>([])
+    const [uniqueNations, setUniqueNations] = useState<string[]>([])
+    const [uniqueLevels, setUniqueLevels] = useState<number[]>([])
 
     useEffect(() => {
         async function FetchAllShips() {
             try {
                 const response = await fetch('https://vortex.korabli.su/api/graphql/glossary/', {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json',
-                  },
-                  body: JSON.stringify({
-                    query: `
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        query: `
                       {
                         vehicles {
                           title
@@ -47,12 +50,18 @@ const ShipGrid: FC = (props) => {
                         }
                       }
                     `
-                  })
-                });        
+                    })
+                });
                 const resp: GraphQLResponse = await response.json();
-                console.log(resp.data.vehicles);
 
-                setData(resp.data.vehicles)
+                // shuffle array for more fun
+                // uncomment to use
+                let shuffledData = [...resp.data.vehicles];
+                for (let i = shuffledData.length - 1; i > 0; i--) {
+                    let j = Math.floor(Math.random() * (i + 1));
+                    [shuffledData[i], shuffledData[j]] = [shuffledData[j], shuffledData[i]]
+                }
+                setData(shuffledData)
                 setIsLoading(false)
             } catch (err) {
                 console.error('Error:', err);
@@ -61,12 +70,18 @@ const ShipGrid: FC = (props) => {
         FetchAllShips()
     }, [])
 
+    useEffect(() => {
+        setUniqueLevels(Array.from(new Set(data.map(item => item.level))))
+        setUniqueClasses(Array.from(new Set(data.map(item => item.type.title))))
+        setUniqueNations(Array.from(new Set(data.map(item => item.nation.title))))
+    }, [data])
+
     return (
         <>
             {isLoading && <div>Loading....</div>}
             {!isLoading && (
                 <>
-                    {/* <Filter /> */}
+                    <Filter shipClasses={uniqueClasses} shipLevels={uniqueLevels} shipNations={uniqueNations} />
                     <div className='ship-grid'>
                         {data.map((vehicle, index) => (
                             <ShipCard key={index} vehicle={vehicle} />

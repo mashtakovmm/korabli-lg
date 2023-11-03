@@ -3,7 +3,7 @@ import { Vehicle } from '../types';
 import './ShipCard.css'
 
 interface props {
-    vehicle : Vehicle
+    vehicle: Vehicle
 }
 
 const ShipCard: FC<props> = (props) => {
@@ -19,20 +19,20 @@ const ShipCard: FC<props> = (props) => {
                 <h4 className='info-section-title'>Class</h4>
                 <div className='info-text'>
                     <p>{vehicle.type.title}</p>
-                    <img src={vehicle.type.icons.default} alt={vehicle.type.title} title={vehicle.type.title}/>
+                    <img src={vehicle.type.icons.default} alt={vehicle.type.title} title={vehicle.type.title} />
                 </div>
                 <hr></hr>
                 <h4 className='info-section-title'>Level: {vehicle.level}</h4>
                 <hr></hr>
                 <h4 className='info-section-title'>Nation</h4>
-                <div className='info-text'>
+                <div className='info-text nation-info'>
+                    <img src={vehicle.nation.icons.small} alt={vehicle.nation.title} title={vehicle.nation.title}/>
                     <p>{vehicle.nation.title}</p>
-                    <img src={vehicle.nation.icons.small} alt={vehicle.nation.title} title={vehicle.nation.title} />
                 </div>
             </div>
             <div className='secondary-info-container'>
                 <p className='vehicle-description'>{vehicle.description}</p>
-                <img className='ship-img' src={vehicle.icons.large} alt={vehicle.title} title={vehicle.title}/>
+                <img className='ship-img' src={vehicle.icons.large} alt={vehicle.title} title={vehicle.title} />
             </div>
         </div>
     )
