@@ -36,3 +36,14 @@ export interface GraphQLResponse {
         vehicles: Vehicle[];
     }
 }
+
+export interface ShipFilter {
+    levels: number[];
+    nation: string[];
+    type: string[];
+}
+
+export interface ActionType {
+    type: string;
+    payload: string | number;
+}

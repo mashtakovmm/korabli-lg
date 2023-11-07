@@ -10,12 +10,13 @@
     padding: 10px;
     min-width: 50px;
     font-size: 12px;
+    transition: 0.3s;
 }
 
 .filter-button:hover {
-    background-color: #d82a30;
+    background-color: #c1272d;
 }
 
-.filter-button:active {
-    background-color: #c1272d;
+.filter-button.active {
+    background-color: #d82a30;
 }

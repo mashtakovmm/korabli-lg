@@ -1,15 +1,25 @@
-import { FC, useState, useEffect } from 'react'
-import { Vehicle, GraphQLResponse } from '../types';
+import { FC, useState, useEffect, useReducer } from 'react'
+import { Vehicle, GraphQLResponse, ShipFilter, ActionType } from '../types';
 import ShipCard from '../ShipCard/ShipCard';
 import './ShipsGrid.css'
 import Filter from '../Filter/Filter';
 
-const ShipGrid: FC = (props) => {
+const ShipGrid: FC = () => {
     const [data, setData] = useState<Vehicle[]>([])
+    const [displayData, setDisplayData] = useState<Vehicle[]>([])
     const [isLoading, setIsLoading] = useState(true)
     const [uniqueClasses, setUniqueClasses] = useState<string[]>([])
     const [uniqueNations, setUniqueNations] = useState<string[]>([])
     const [uniqueLevels, setUniqueLevels] = useState<number[]>([])
+
+    const initialState: ShipFilter = {
+        levels: [],
+        nation: [],
+        type: []
+    };
+
+    const [filters, dispatchFilters] = useReducer<React.Reducer<ShipFilter, ActionType>>(filtersReducer, initialState);
+
 
     useEffect(() => {
         async function FetchAllShips() {
@@ -62,6 +72,7 @@ const ShipGrid: FC = (props) => {
                     [shuffledData[i], shuffledData[j]] = [shuffledData[j], shuffledData[i]]
                 }
                 setData(shuffledData)
+                setDisplayData(shuffledData)
                 setIsLoading(false)
             } catch (err) {
                 console.error('Error:', err);
@@ -76,17 +87,83 @@ const ShipGrid: FC = (props) => {
         setUniqueNations(Array.from(new Set(data.map(item => item.nation.title))))
     }, [data])
 
+    useEffect(() => {
+        let itemsToShow = data
+        if (filters.levels.length > 0) {
+            itemsToShow = itemsToShow.filter(item => filters.levels.includes(item.level));
+        }
+        if (filters.nation.length > 0) {
+            itemsToShow = itemsToShow.filter(item => filters.nation.includes(item.nation.title));
+        }
+        if (filters.type.length > 0) {
+            itemsToShow = itemsToShow.filter(item => filters.type.includes(item.type.title));
+        }
+        setDisplayData(itemsToShow)
+    }, [filters])
+
+
+    function filtersReducer(state: ShipFilter, action: ActionType): ShipFilter {
+        switch (action.type) {
+            case 'ADD_LEVEL': {
+                return {
+                    ...state,
+                    levels: [...state.levels, action.payload as number]
+                }
+            }
+            case 'ADD_NATION': {
+                return {
+                    ...state,
+                    nation: [...state.nation, action.payload as string]
+                }
+            }
+            case 'ADD_CLASS': {
+                return {
+                    ...state,
+                    type: [...state.type, action.payload as string]
+                }
+            }
+            case 'DELETE_LEVEL': {
+                return {
+                    ...state,
+                    levels: [...state.levels.filter(item => item != action.payload)]
+                }
+            }
+            case 'DELETE_NATION': {
+                return {
+                    ...state,
+                    nation: [...state.nation.filter(item => item != action.payload)]
+                }
+            }
+            case 'DELETE_CLASS': {
+                return {
+                    ...state,
+                    type: [...state.type.filter(item => item != action.payload)]
+                }
+            }
+            default: {
+                return { ...state }
+            }
+        }
+    }
+
     return (
         <>
             {isLoading && <div>Loading....</div>}
             {!isLoading && (
                 <>
-                    <Filter shipClasses={uniqueClasses} shipLevels={uniqueLevels} shipNations={uniqueNations} />
-                    <div className='ship-grid'>
-                        {data.map((vehicle, index) => (
-                            <ShipCard key={index} vehicle={vehicle} />
-                        ))}
-                    </div>
+                    <Filter shipClasses={uniqueClasses} shipLevels={uniqueLevels} shipNations={uniqueNations} dispatcher={dispatchFilters} />
+                    {displayData.length > 0 && (
+                        <div className='ship-grid'>
+                            {displayData.map((vehicle, index) => (
+                                <ShipCard key={index} vehicle={vehicle} />
+                            ))}
+                        </div>
+                    )}
+                    {displayData.length <= 0 && (
+                        <div>
+                            {`No data :(`}
+                        </div>
+                    )}
                 </>
             )}
         </>

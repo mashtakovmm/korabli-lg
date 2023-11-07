@@ -1,16 +1,37 @@
-import { FC } from 'react'
+import { FC, useState } from 'react'
 import "./FilterButton.css"
+import { ActionType } from '../types'
 
 interface props {
-    key: number
     text: string | number
     value: string | number
+    filterName: string
+    dispatcher: React.Dispatch<ActionType>
 }
 
 const FilterButton: FC<props> = (props) => {
-    const { key, text, value } = props
+    const { text, value, dispatcher, filterName } = props
+    const [isActive, setIsActive] = useState(false)
+
+    function onClick() {
+        console.log(`ADD_${filterName.toUpperCase()}`);
+        
+        if (!isActive) {
+            dispatcher({
+                type: `ADD_${filterName.toUpperCase()}`,
+                payload: value
+            })
+        } else {
+            dispatcher({
+                type: `DELETE_${filterName.toUpperCase()}`,
+                payload: value
+            })
+        }
+        setIsActive(prev => !prev)
+    }
+
     return (
-        <button key={key} className='filter-button'>{text}</button>
+        <button className={`filter-button ${isActive ? "active" : ""}`} onClick={onClick}>{text}</button>
     )
 }
 
