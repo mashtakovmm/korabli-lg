@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, useEffect, useRef } from 'react'
 import "./Filter.css"
 import FilterButton from '../UI/FilterButton'
 import { ActionType } from '../types';
@@ -8,12 +8,32 @@ interface props {
     shipLevels: number[]
     shipClasses: string[]
     dispatcher: React.Dispatch<ActionType>
+    callback: Function
 }
 
 const Filter: FC<props> = (props) => {
-    const { shipClasses, shipLevels, shipNations, dispatcher } = props
+    const { shipClasses, shipLevels, shipNations, dispatcher, callback } = props
+    const ref = useRef(null)
+    let heightOffset:number
+
+    const resizeObserver = new ResizeObserver(entries => {
+        entries.forEach(entry => {
+            if(ref.current) {
+                heightOffset = entry.contentRect.height + parseInt(window.getComputedStyle(ref.current).getPropertyValue('padding')) + 15
+            }
+            callback(heightOffset)
+        });
+    });
+
+    useEffect(() => {
+        const headerElement = document.querySelector(".header");
+        if (headerElement) {
+            resizeObserver.observe(headerElement);
+        }
+    }, [])
+
     return (
-        <div className='header'>
+        <div className='header' ref={ref}>
             <div className='filter-container'>
                 <h4 className='filter-title'>Nation</h4>
                 <div className='button-container'>

@@ -1,4 +1,4 @@
-import { FC, useState, useEffect, useReducer } from 'react'
+import { FC, useState, useEffect, useReducer, useRef } from 'react'
 import { Vehicle, GraphQLResponse, ShipFilter, ActionType } from '../types';
 import ShipCard from '../ShipCard/ShipCard';
 import './ShipsGrid.css'
@@ -11,6 +11,7 @@ const ShipGrid: FC = () => {
     const [uniqueClasses, setUniqueClasses] = useState<string[]>([])
     const [uniqueNations, setUniqueNations] = useState<string[]>([])
     const [uniqueLevels, setUniqueLevels] = useState<number[]>([])
+    const [offset, setOffset] = useState(0)
 
     const initialState: ShipFilter = {
         levels: [],
@@ -19,7 +20,6 @@ const ShipGrid: FC = () => {
     };
 
     const [filters, dispatchFilters] = useReducer<React.Reducer<ShipFilter, ActionType>>(filtersReducer, initialState);
-
 
     useEffect(() => {
         async function FetchAllShips() {
@@ -64,7 +64,7 @@ const ShipGrid: FC = () => {
                 });
                 const resp: GraphQLResponse = await response.json();
 
-                // shuffle array for more fun
+                // shuffle array
                 // uncomment to use
                 let shuffledData = [...resp.data.vehicles];
                 for (let i = shuffledData.length - 1; i > 0; i--) {
@@ -146,21 +146,27 @@ const ShipGrid: FC = () => {
         }
     }
 
+    function HandleHightCallback(offset:number) {
+        setOffset(offset)
+        console.log(offset);
+        
+    }
+
     return (
         <>
             {isLoading && <div>Loading....</div>}
             {!isLoading && (
                 <>
-                    <Filter shipClasses={uniqueClasses} shipLevels={uniqueLevels} shipNations={uniqueNations} dispatcher={dispatchFilters} />
+                    <Filter shipClasses={uniqueClasses} shipLevels={uniqueLevels} shipNations={uniqueNations} dispatcher={dispatchFilters} callback={HandleHightCallback}/>
                     {displayData.length > 0 && (
-                        <div className='ship-grid'>
+                        <div className='ship-grid' style={{marginTop:offset}}>
                             {displayData.map((vehicle, index) => (
                                 <ShipCard key={index} vehicle={vehicle} />
                             ))}
                         </div>
                     )}
                     {displayData.length <= 0 && (
-                        <div>
+                        <div style={{marginTop:offset}}>
                             {`No data :(`}
                         </div>
                     )}

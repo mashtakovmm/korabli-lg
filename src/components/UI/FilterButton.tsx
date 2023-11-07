@@ -14,8 +14,6 @@ const FilterButton: FC<props> = (props) => {
     const [isActive, setIsActive] = useState(false)
 
     function onClick() {
-        console.log(`ADD_${filterName.toUpperCase()}`);
-        
         if (!isActive) {
             dispatcher({
                 type: `ADD_${filterName.toUpperCase()}`,

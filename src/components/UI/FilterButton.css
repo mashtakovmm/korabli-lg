@@ -2,14 +2,14 @@
     color: white;
     text-transform: uppercase;
     font-weight: bold;
-    background-color: #e3340c;
+    background-color: transparent;
     box-shadow: none;
-    border: solid 0px #5d4f49;
+    border: solid 3px #e3340c;
     border-radius: 20px;
     text-align: center;
     padding: 10px;
     min-width: 50px;
-    font-size: 12px;
+    font-size: 10px;
     transition: 0.3s;
 }
 
@@ -18,5 +18,6 @@
 }
 
 .filter-button.active {
+    border-color: #d82a30;
     background-color: #d82a30;
 }
