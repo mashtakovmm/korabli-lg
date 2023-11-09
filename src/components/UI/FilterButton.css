@@ -4,7 +4,7 @@
     font-weight: bold;
     background-color: transparent;
     box-shadow: none;
-    border: solid 3px #e3340c;
+    border: solid 3px #cbced2;
     border-radius: 20px;
     text-align: center;
     padding: 10px;
@@ -14,10 +14,10 @@
 }
 
 .filter-button:hover {
-    background-color: #c1272d;
+    border-color: #fc6000;
 }
 
 .filter-button.active {
-    border-color: #d82a30;
-    background-color: #d82a30;
+    border-color: #fc6000;
+    background-color: #fc6000;
 }

@@ -3,6 +3,7 @@ import { Vehicle, GraphQLResponse, ShipFilter, ActionType } from '../types';
 import ShipCard from '../ShipCard/ShipCard';
 import './ShipsGrid.css'
 import Filter from '../Filter/Filter';
+import Loading from '../UI/Loading';
 
 const ShipGrid: FC = () => {
     const [data, setData] = useState<Vehicle[]>([])
@@ -154,7 +155,7 @@ const ShipGrid: FC = () => {
 
     return (
         <>
-            {isLoading && <div>Loading....</div>}
+            {isLoading && <Loading/>}
             {!isLoading && (
                 <>
                     <Filter shipClasses={uniqueClasses} shipLevels={uniqueLevels} shipNations={uniqueNations} dispatcher={dispatchFilters} callback={HandleHightCallback}/>
@@ -166,8 +167,8 @@ const ShipGrid: FC = () => {
                         </div>
                     )}
                     {displayData.length <= 0 && (
-                        <div style={{marginTop:offset}}>
-                            {`No data :(`}
+                        <div className='eror-container' style={{marginTop:offset}}>
+                            <p className='no-data-error'>Ship not found :(</p>
                         </div>
                     )}
                 </>
