@@ -1,13 +1,13 @@
-import { FC, useState, useEffect, useReducer } from 'react'
-import { Vehicle, GraphQLResponse, ShipFilter, ActionType } from '../types';
+import { FC, useState, useEffect, useReducer, useMemo } from 'react'
+import { Vehicle, GraphQLResponse, ActionType, ShipFilter } from '../types';
 import ShipCard from '../ShipCard/ShipCard';
 import './ShipsGrid.css'
 import Filter from '../Filter/Filter';
 import Loading from '../UI/Loading';
+import filtersReducer from '../../utils/reducer';
 
 const ShipGrid: FC = () => {
     const [data, setData] = useState<Vehicle[]>([])
-    const [displayData, setDisplayData] = useState<Vehicle[]>([])
     const [isLoading, setIsLoading] = useState(true)
     const [uniqueClasses, setUniqueClasses] = useState<string[]>([])
     const [uniqueNations, setUniqueNations] = useState<string[]>([])
@@ -68,106 +68,53 @@ const ShipGrid: FC = () => {
                 // shuffle array
                 // uncomment to use
                 let shuffledData = [...resp.data.vehicles];
-                for (let i = shuffledData.length - 1; i > 0; i--) {
-                    let j = Math.floor(Math.random() * (i + 1));
-                    [shuffledData[i], shuffledData[j]] = [shuffledData[j], shuffledData[i]]
-                }
+                // for (let i = shuffledData.length - 1; i > 0; i--) {
+                //     let j = Math.floor(Math.random() * (i + 1));
+                //     [shuffledData[i], shuffledData[j]] = [shuffledData[j], shuffledData[i]]
+                // }
                 setData(shuffledData)
-                setDisplayData(shuffledData)
                 setIsLoading(false)
             } catch (err) {
-                console.error('Error:', err);
+                console.error('Error: ', err);
             }
         }
         FetchAllShips()
     }, [])
 
-    useEffect(() => {
+    useMemo(() => {
         setUniqueLevels(Array.from(new Set(data.map(item => item.level))))
         setUniqueClasses(Array.from(new Set(data.map(item => item.type.title))))
         setUniqueNations(Array.from(new Set(data.map(item => item.nation.title))))
     }, [data])
 
-    useEffect(() => {
-        let itemsToShow = data
-        if (filters.levels.length > 0) {
-            itemsToShow = itemsToShow.filter(item => filters.levels.includes(item.level));
-        }
-        if (filters.nation.length > 0) {
-            itemsToShow = itemsToShow.filter(item => filters.nation.includes(item.nation.title));
-        }
-        if (filters.type.length > 0) {
-            itemsToShow = itemsToShow.filter(item => filters.type.includes(item.type.title));
-        }
-        setDisplayData(itemsToShow)
-    }, [filters])
+    const filteredData = useMemo(() => {
+        return data.filter(item => 
+            (filters.levels.length === 0 || filters.levels.includes(item.level)) &&
+            (filters.type.length === 0 || filters.type.includes(item.type.title)) &&
+            (filters.nation.length === 0 || filters.nation.includes(item.nation.title))
+        );
+    }, [filters, data]);
 
 
-    function filtersReducer(state: ShipFilter, action: ActionType): ShipFilter {
-        switch (action.type) {
-            case 'ADD_LEVEL': {
-                return {
-                    ...state,
-                    levels: [...state.levels, action.payload as number]
-                }
-            }
-            case 'ADD_NATION': {
-                return {
-                    ...state,
-                    nation: [...state.nation, action.payload as string]
-                }
-            }
-            case 'ADD_CLASS': {
-                return {
-                    ...state,
-                    type: [...state.type, action.payload as string]
-                }
-            }
-            case 'DELETE_LEVEL': {
-                return {
-                    ...state,
-                    levels: [...state.levels.filter(item => item != action.payload)]
-                }
-            }
-            case 'DELETE_NATION': {
-                return {
-                    ...state,
-                    nation: [...state.nation.filter(item => item != action.payload)]
-                }
-            }
-            case 'DELETE_CLASS': {
-                return {
-                    ...state,
-                    type: [...state.type.filter(item => item != action.payload)]
-                }
-            }
-            default: {
-                return { ...state }
-            }
-        }
-    }
-
-    function HandleHightCallback(offset:number) {
+    function HandleHightCallback(offset: number) {
         setOffset(offset)
-        console.log(offset);
-        
     }
 
     return (
         <>
-            {isLoading && <Loading/>}
+            {isLoading && <Loading />}
             {!isLoading && (
                 <>
-                    <Filter shipClasses={uniqueClasses} shipLevels={uniqueLevels} shipNations={uniqueNations} dispatcher={dispatchFilters} callback={HandleHightCallback}/>
-                    {displayData.length > 0 && (
-                        <div className='ship-grid' style={{marginTop:offset}}>
-                            {displayData.map((vehicle, index) => (
+                    <Filter shipClasses={uniqueClasses} shipLevels={uniqueLevels} shipNations={uniqueNations} dispatcher={dispatchFilters} callback={HandleHightCallback} />
+                    {filteredData.length > 0 && (
+                        <div className='ship-grid' style={{ marginTop: offset }}>
+                            {filteredData.map((vehicle, index) => (
                                 <ShipCard key={index} vehicle={vehicle} />
                             ))}
                         </div>
                     )}
-                    {displayData.length <= 0 && (
-                        <div className='eror-container' style={{marginTop:offset}}>
+                    {filteredData.length <= 0 && (
+                        <div className='eror-container' style={{ marginTop: offset }}>
                             <p className='no-data-error'>Ship not found :(</p>
                         </div>
                     )}
